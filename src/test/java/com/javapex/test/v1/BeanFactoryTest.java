@@ -8,6 +8,7 @@ import com.javapex.beans.factory.support.DefaultBeanFactory;
 import com.javapex.beans.factory.xml.XmlBeanDefinitionReader;
 import com.javapex.service.v1.PetStoreService;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -15,12 +16,16 @@ import static org.junit.Assert.assertNotNull;
 
 public class BeanFactoryTest {
 
+    DefaultBeanFactory factory = null;
+    XmlBeanDefinitionReader reader = null;
+    @Before
+    public void setUp(){
+        factory = new DefaultBeanFactory();
+        reader = new XmlBeanDefinitionReader(factory);
+    }
     @Test
     public void testGetBean() {
 
-        //BeanFactory factory = new DefaultBeanFactory("petstore-v1.xml");
-        DefaultBeanFactory factory = new DefaultBeanFactory();
-        XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(factory);
         reader.loadBeanDefinitions("petstore-v1.xml");
 
         BeanDefinition beanDefinition = factory.getBeanDefinition("petStore");
@@ -31,9 +36,6 @@ public class BeanFactoryTest {
 
     @Test
     public void testInvalidBean() {
-        //BeanFactory factory = new DefaultBeanFactory("petstore-v1.xml");
-        DefaultBeanFactory factory = new DefaultBeanFactory();
-        XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(factory);
         reader.loadBeanDefinitions("petstore-v1.xml");
         try {
             factory.getBean("invalidBean");
@@ -46,14 +48,13 @@ public class BeanFactoryTest {
     @Test
     public void testInvalidXml() {
         try {
-            DefaultBeanFactory factory = new DefaultBeanFactory();
-            XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(factory);
+
             reader.loadBeanDefinitions("eeeeeeeeeeee.xml");
 
             //new DefaltBeanFactory("eeeeeeeeeeee.xml");
         }catch (BeanDefinitionStoreException e){
             return;
         }
-        Assert.fail("expect BeanDefinitonStoreException");
+        Assert.fail("expect BeanDefinitionStoreException");
     }
 }
