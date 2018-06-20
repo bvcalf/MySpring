@@ -2,7 +2,6 @@ package com.javapex.beans.factory.support;
 
 import com.javapex.beans.BeanDefinition;
 import com.javapex.beans.factory.BeanCreationException;
-import com.javapex.beans.factory.BeanDefinitonStoreException;
 import com.javapex.beans.factory.BeanFactory;
 import com.javapex.util.ClassUtils;
 import org.dom4j.Document;
@@ -16,20 +15,22 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class DefaultBeanFactory implements BeanFactory {
+public class DefaultBeanFactory implements BeanFactory,BeanDefinitionRegistry {
 
     public static final String ID_ATTRIBUTE = "id";
     public static final String CLASS_ATTRIBUTE = "class";
     private final Map<String,BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<String, BeanDefinition>();
-    public DefaultBeanFactory(String configFile) {
-        loadBeanDefinition(configFile);
-    }
+    public DefaultBeanFactory() {
 
+    }
+/*
     private void loadBeanDefinition(String configFile) {
         InputStream inputStream = null;
         try {
             ClassLoader classLoader = ClassUtils.getDefaultClassLoader();
             inputStream = classLoader.getResourceAsStream(configFile);
+
+            //解析xml文件
             SAXReader saxReader = new SAXReader();
             Document document = saxReader.read(inputStream);
 
@@ -56,9 +57,13 @@ public class DefaultBeanFactory implements BeanFactory {
             }
         }
     }
-
+*/
     public BeanDefinition getBeanDefinition(String beanID) {
         return this.beanDefinitionMap.get(beanID);
+    }
+
+    public void registerBeanDefinition(String beanID, BeanDefinition bd) {
+        this.beanDefinitionMap.put(beanID, bd);
     }
 
     public Object getBean(String beanID) {
