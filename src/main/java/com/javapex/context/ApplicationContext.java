@@ -1,6 +1,6 @@
 package com.javapex.context;
 
-import com.javapex.beans.factory.BeanFactory;
+import com.javapex.beans.factory.config.ConfigurableBeanFactory;
 
-public interface ApplicationContext extends BeanFactory {
+public interface ApplicationContext extends ConfigurableBeanFactory {
 }

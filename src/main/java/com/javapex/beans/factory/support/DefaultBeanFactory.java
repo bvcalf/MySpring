@@ -3,61 +3,18 @@ package com.javapex.beans.factory.support;
 import com.javapex.beans.BeanDefinition;
 import com.javapex.beans.factory.BeanCreationException;
 import com.javapex.beans.factory.BeanFactory;
+import com.javapex.beans.factory.config.ConfigurableBeanFactory;
 import com.javapex.util.ClassUtils;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class DefaultBeanFactory implements BeanFactory,BeanDefinitionRegistry {
-
-    public static final String ID_ATTRIBUTE = "id";
-    public static final String CLASS_ATTRIBUTE = "class";
+public class DefaultBeanFactory implements BeanFactory,BeanDefinitionRegistry,ConfigurableBeanFactory {
+    private ClassLoader beanClassLoader;
     private final Map<String,BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<String, BeanDefinition>();
     public DefaultBeanFactory() {
 
     }
-/*
-    private void loadBeanDefinition(String configFile) {
-        InputStream inputStream = null;
-        try {
-            ClassLoader classLoader = ClassUtils.getDefaultClassLoader();
-            inputStream = classLoader.getResourceAsStream(configFile);
 
-            //解析xml文件
-            SAXReader saxReader = new SAXReader();
-            Document document = saxReader.read(inputStream);
-
-            Element rootElement = document.getRootElement();//<beans>
-            Iterator iterator = rootElement.elementIterator();
-            while (iterator.hasNext()){
-                Element element = (Element) iterator.next();
-                String id = element.attributeValue(ID_ATTRIBUTE);
-                String beanClassName = element.attributeValue(CLASS_ATTRIBUTE);
-                BeanDefinition beanDefinition = new GenericBeanDefinition(id, beanClassName);
-                this.beanDefinitionMap.put(id,beanDefinition);
-            }
-        } catch (DocumentException e) {
-            //  抛出异常
-            //e.printStackTrace();
-            throw  new BeanDefinitonStoreException("IOException when parsing xml document",e);
-        } finally {
-            if (inputStream != null){
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-*/
     public BeanDefinition getBeanDefinition(String beanID) {
         return this.beanDefinitionMap.get(beanID);
     }
@@ -69,11 +26,9 @@ public class DefaultBeanFactory implements BeanFactory,BeanDefinitionRegistry {
     public Object getBean(String beanID) {
         BeanDefinition beanDefinition = this.getBeanDefinition(beanID);
         if (beanDefinition == null){
-            //return null;
             throw new BeanCreationException("BeanDefinition does not exist");
         }
-
-        ClassLoader classLoader = ClassUtils.getDefaultClassLoader();
+        ClassLoader classLoader = this.getBeanClassLoader();
         String beansClassName = beanDefinition.getBeansClassName();
         try {
             Class<?> clz = classLoader.loadClass(beansClassName);
@@ -82,6 +37,13 @@ public class DefaultBeanFactory implements BeanFactory,BeanDefinitionRegistry {
             throw new BeanCreationException("create bean for "+ beansClassName +" failed",e);
         }
 
-        //return null;
+    }
+
+    public void setBeanClassLoader(ClassLoader beanClassLoader) {
+        this.beanClassLoader = beanClassLoader;
+    }
+
+    public ClassLoader getBeanClassLoader() {
+        return (this.beanClassLoader != null ? this.beanClassLoader : ClassUtils.getDefaultClassLoader());
     }
 }
