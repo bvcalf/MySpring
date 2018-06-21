@@ -4,6 +4,7 @@ import com.javapex.beans.BeanDefinition;
 import com.javapex.beans.factory.BeanDefinitionStoreException;
 import com.javapex.beans.factory.support.BeanDefinitionRegistry;
 import com.javapex.beans.factory.support.GenericBeanDefinition;
+import com.javapex.core.io.Resource;
 import com.javapex.util.ClassUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -25,7 +26,7 @@ public class XmlBeanDefinitionReader {
     public XmlBeanDefinitionReader(BeanDefinitionRegistry registry){
         this.registry = registry;
     }
-/*
+
     public void loadBeanDefinitions(Resource resource){
         InputStream is = null;
         try{
@@ -56,7 +57,7 @@ public class XmlBeanDefinitionReader {
             }
         }
     }
-*/
+
     public void loadBeanDefinitions(String configFile){
         InputStream is = null;
         try{

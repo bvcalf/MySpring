@@ -30,7 +30,7 @@ public class ResourceTest {
 
     @Test
     public void testFileSystemResource() throws Exception {
-
+        //TODO: 处理写死的路径
 		Resource r = new FileSystemResource("C:\\git-local\\MySpring\\src\\test\\resources\\petstore-v1.xml");
 		InputStream is = null;
 		try {
