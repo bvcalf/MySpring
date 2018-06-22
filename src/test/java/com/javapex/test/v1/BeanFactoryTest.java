@@ -11,8 +11,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 public class BeanFactoryTest {
 
@@ -27,11 +26,20 @@ public class BeanFactoryTest {
     public void testGetBean() {
 
         reader.loadBeanDefinitions("petstore-v1.xml");
-
         BeanDefinition beanDefinition = factory.getBeanDefinition("petStore");
+
+        assertTrue(beanDefinition.isSingleton());
+        assertFalse(beanDefinition.isPrototype());
+        assertEquals(BeanDefinition.SCOPE_DEFAULT,beanDefinition.getScope());
+
         assertEquals("com.javapex.service.v1.PetStoreService",beanDefinition.getBeansClassName());
         PetStoreService petStoreService = (PetStoreService)factory.getBean("petStore");
         assertNotNull(petStoreService);
+
+        //验证单例
+        PetStoreService petStoreService1 = (PetStoreService)factory.getBean("petStore");
+        assertTrue(petStoreService.equals(petStoreService1));
+
     }
 
     @Test

@@ -8,7 +8,9 @@ import com.javapex.util.ClassUtils;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class DefaultBeanFactory implements BeanFactory,BeanDefinitionRegistry,ConfigurableBeanFactory {
+public class DefaultBeanFactory extends DefaultSingletonBeanRegistry
+        implements BeanDefinitionRegistry,ConfigurableBeanFactory {
+
     private ClassLoader beanClassLoader;
     private final Map<String,BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<String, BeanDefinition>();
     public DefaultBeanFactory() {
@@ -28,6 +30,20 @@ public class DefaultBeanFactory implements BeanFactory,BeanDefinitionRegistry,Co
         if (beanDefinition == null){
             throw new BeanCreationException("BeanDefinition does not exist");
         }
+        if(beanDefinition.isSingleton()){
+            Object bean = this.getSingleton(beanID);
+            if(bean == null){
+                bean = createBean(beanDefinition);
+                this.registerSingleton(beanID, bean);
+            }
+            return bean;
+        }
+        return createBean(beanDefinition);
+
+    }
+
+    public Object createBean(BeanDefinition beanDefinition){
+
         ClassLoader classLoader = this.getBeanClassLoader();
         String beansClassName = beanDefinition.getBeansClassName();
         try {
@@ -38,7 +54,6 @@ public class DefaultBeanFactory implements BeanFactory,BeanDefinitionRegistry,Co
         }
 
     }
-
     public void setBeanClassLoader(ClassLoader beanClassLoader) {
         this.beanClassLoader = beanClassLoader;
     }
