@@ -1,10 +1,15 @@
 package com.javapex.beans.factory.support;
 
 import com.javapex.beans.BeanDefinition;
+import com.javapex.beans.PropertyValue;
 import com.javapex.beans.factory.BeanCreationException;
-import com.javapex.beans.factory.BeanFactory;
 import com.javapex.beans.factory.config.ConfigurableBeanFactory;
 import com.javapex.util.ClassUtils;
+
+import java.beans.BeanInfo;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -41,8 +46,16 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry
         return createBean(beanDefinition);
 
     }
+    private Object createBean(BeanDefinition beanDefinition) {
+        //创建实例
+        Object bean = instantiateBean(beanDefinition);
+        //设置属性
+        populateBean(beanDefinition, bean);
 
-    public Object createBean(BeanDefinition beanDefinition){
+        return bean;
+
+    }
+    public Object instantiateBean(BeanDefinition beanDefinition){
 
         ClassLoader classLoader = this.getBeanClassLoader();
         String beansClassName = beanDefinition.getBeansClassName();
@@ -53,6 +66,36 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry
             throw new BeanCreationException("create bean for "+ beansClassName +" failed",e);
         }
 
+    }
+    protected void populateBean(BeanDefinition bd, Object bean){
+        List<PropertyValue> pvs = bd.getPropertyValues();
+
+        if (pvs == null || pvs.isEmpty()) {
+            return;
+        }
+
+        BeanDefinitionValueResolver valueResolver = new BeanDefinitionValueResolver(this);
+
+        try{
+            for (PropertyValue pv : pvs){
+                String propertyName = pv.getName();
+                Object originalValue = pv.getValue();
+                Object resolvedValue = valueResolver.resolveValueIfNecessary(originalValue);
+
+                BeanInfo beanInfo = Introspector.getBeanInfo(bean.getClass());
+                PropertyDescriptor[] pds = beanInfo.getPropertyDescriptors();
+                for (PropertyDescriptor pd : pds) {
+                    if(pd.getName().equals(propertyName)){
+                        pd.getWriteMethod().invoke(bean, resolvedValue);
+                        break;
+                    }
+                }
+
+
+            }
+        }catch(Exception ex){
+            throw new BeanCreationException("Failed to obtain BeanInfo for class [" + bd.getBeansClassName() + "]", ex);
+        }
     }
     public void setBeanClassLoader(ClassLoader beanClassLoader) {
         this.beanClassLoader = beanClassLoader;
