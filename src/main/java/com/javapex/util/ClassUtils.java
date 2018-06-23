@@ -1,7 +1,7 @@
 package com.javapex.util;
 
 
-import org.junit.Assert;
+import org.junit.Assert.*;
 
 //import java.beans.Introspector;
 import java.lang.reflect.Array;
@@ -904,26 +904,26 @@ public abstract class ClassUtils {
      * @return if the target type is assignable from the value type
      * @see TypeUtils#isAssignable
      */
-//    public static boolean isAssignable(Class<?> lhsType, Class<?> rhsType) {
-//        ////Assert.notNull(lhsType, "Left-hand side type must not be null");
-//        ////Assert.notNull(rhsType, "Right-hand side type must not be null");
-//        if (lhsType.isAssignableFrom(rhsType)) {
-//            return true;
-//        }
-//        if (lhsType.isPrimitive()) {
-//            Class<?> resolvedPrimitive = primitiveWrapperTypeMap.get(rhsType);
-//            if (resolvedPrimitive != null && lhsType.equals(resolvedPrimitive)) {
-//                return true;
-//            }
-//        }
-//        else {
-//            Class<?> resolvedWrapper = primitiveTypeToWrapperMap.get(rhsType);
-//            if (resolvedWrapper != null && lhsType.isAssignableFrom(resolvedWrapper)) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
+    public static boolean isAssignable(Class<?> lhsType, Class<?> rhsType) {
+        Assert.notNull(lhsType, "Left-hand side type must not be null");
+        Assert.notNull(rhsType, "Right-hand side type must not be null");
+        if (lhsType.isAssignableFrom(rhsType)) {
+            return true;
+        }
+        if (lhsType.isPrimitive()) {
+            Class<?> resolvedPrimitive = primitiveWrapperTypeMap.get(rhsType);
+            if (resolvedPrimitive != null && lhsType.equals(resolvedPrimitive)) {
+                return true;
+            }
+        }
+        else {
+            Class<?> resolvedWrapper = primitiveTypeToWrapperMap.get(rhsType);
+            if (resolvedWrapper != null && lhsType.isAssignableFrom(resolvedWrapper)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Determine if the given type is assignable from the given value,
@@ -933,10 +933,10 @@ public abstract class ClassUtils {
      * @param value the value that should be assigned to the type
      * @return if the type is assignable from the value
      */
-//    public static boolean isAssignableValue(Class<?> type, Object value) {
-//        ////Assert.notNull(type, "Type must not be null");
-//        return (value != null ? isAssignable(type, value.getClass()) : !type.isPrimitive());
-//    }
+    public static boolean isAssignableValue(Class<?> type, Object value) {
+        Assert.notNull(type, "Type must not be null");
+        return (value != null ? isAssignable(type, value.getClass()) : !type.isPrimitive());
+    }
 
 
     /**

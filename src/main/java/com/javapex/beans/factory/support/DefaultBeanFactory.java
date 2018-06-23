@@ -2,6 +2,7 @@ package com.javapex.beans.factory.support;
 
 import com.javapex.beans.BeanDefinition;
 import com.javapex.beans.PropertyValue;
+import com.javapex.beans.SimpleTypeConverter;
 import com.javapex.beans.factory.BeanCreationException;
 import com.javapex.beans.factory.config.ConfigurableBeanFactory;
 import com.javapex.util.ClassUtils;
@@ -75,7 +76,7 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry
         }
 
         BeanDefinitionValueResolver valueResolver = new BeanDefinitionValueResolver(this);
-
+        SimpleTypeConverter converter = new SimpleTypeConverter();
         try{
             for (PropertyValue pv : pvs){
                 String propertyName = pv.getName();
@@ -86,7 +87,8 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry
                 PropertyDescriptor[] pds = beanInfo.getPropertyDescriptors();
                 for (PropertyDescriptor pd : pds) {
                     if(pd.getName().equals(propertyName)){
-                        pd.getWriteMethod().invoke(bean, resolvedValue);
+                        Object convertedValue = converter.convertIfNecessary(resolvedValue, pd.getPropertyType());
+                        pd.getWriteMethod().invoke(bean, convertedValue);
                         break;
                     }
                 }

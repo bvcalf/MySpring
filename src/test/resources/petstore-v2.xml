@@ -12,6 +12,8 @@
         <property name="itemDao" ref="itemDao"/>
         <!--简单属性注入-->
         <property name="owner" value="lf"/>
+
+        <property name="version" value="2"/>
     </bean>
 
     <bean id="accountDao"  class="com.javapex.dao.v2.AccountDao">
