@@ -6,7 +6,6 @@ import com.javapex.beans.SimpleTypeConverter;
 import com.javapex.beans.factory.BeanCreationException;
 import com.javapex.beans.factory.config.ConfigurableBeanFactory;
 import com.javapex.util.ClassUtils;
-
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -58,16 +57,23 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry
     }
     public Object instantiateBean(BeanDefinition beanDefinition){
 
-        ClassLoader classLoader = this.getBeanClassLoader();
-        String beansClassName = beanDefinition.getBeansClassName();
-        try {
-            Class<?> clz = classLoader.loadClass(beansClassName);
-            return clz.newInstance();
-        } catch (Exception e) {
-            throw new BeanCreationException("create bean for "+ beansClassName +" failed",e);
+        if(beanDefinition.hasConstructorArgumentValues()){
+            ConstructorResolver resolver = new ConstructorResolver(this);
+            return resolver.autowireConstructor(beanDefinition);
+        }else {
+            ClassLoader classLoader = this.getBeanClassLoader();
+            String beansClassName = beanDefinition.getBeansClassName();
+            try {
+                Class<?> clz = classLoader.loadClass(beansClassName);
+                return clz.newInstance();
+            } catch (Exception e) {
+                throw new BeanCreationException("create bean for "+ beansClassName +" failed",e);
+            }
         }
 
+
     }
+
     protected void populateBean(BeanDefinition bd, Object bean){
         List<PropertyValue> pvs = bd.getPropertyValues();
 

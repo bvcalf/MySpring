@@ -6,6 +6,7 @@ import com.javapex.beans.factory.BeanDefinitionStoreException;
 import com.javapex.beans.factory.BeanFactory;
 import com.javapex.beans.factory.support.DefaultBeanFactory;
 import com.javapex.beans.factory.xml.XmlBeanDefinitionReader;
+import com.javapex.core.io.ClassPathResource;
 import com.javapex.service.v1.PetStoreService;
 import org.junit.Assert;
 import org.junit.Before;
@@ -25,7 +26,7 @@ public class BeanFactoryTest {
     @Test
     public void testGetBean() {
 
-        reader.loadBeanDefinitions("petstore-v1.xml");
+        reader.loadBeanDefinitions(new ClassPathResource("petstore-v1.xml"));
         BeanDefinition beanDefinition = factory.getBeanDefinition("petStore");
 
         assertTrue(beanDefinition.isSingleton());
@@ -44,7 +45,7 @@ public class BeanFactoryTest {
 
     @Test
     public void testInvalidBean() {
-        reader.loadBeanDefinitions("petstore-v1.xml");
+        reader.loadBeanDefinitions(new ClassPathResource("petstore-v1.xml"));
         try {
             factory.getBean("invalidBean");
         }catch (BeanCreationException e){
@@ -57,7 +58,7 @@ public class BeanFactoryTest {
     public void testInvalidXml() {
         try {
 
-            reader.loadBeanDefinitions("eeeeeeeeeeee.xml");
+            reader.loadBeanDefinitions(new ClassPathResource("eeeeeeeeeeee.xml"));
 
             //new DefaltBeanFactory("eeeeeeeeeeee.xml");
         }catch (BeanDefinitionStoreException e){

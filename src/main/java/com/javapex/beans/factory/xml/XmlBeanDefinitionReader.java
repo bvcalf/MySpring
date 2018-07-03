@@ -6,6 +6,7 @@ import com.javapex.beans.factory.BeanDefinitionStoreException;
 import com.javapex.beans.factory.config.RuntimeBeanReference;
 import com.javapex.beans.factory.config.TypedStringValue;
 import com.javapex.beans.factory.support.BeanDefinitionRegistry;
+import com.javapex.beans.factory.support.ConstructorArgument;
 import com.javapex.beans.factory.support.GenericBeanDefinition;
 import com.javapex.core.io.Resource;
 import com.javapex.util.ClassUtils;
@@ -20,20 +21,22 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 
-
+/**
+ * 解析xml
+ */
 public class XmlBeanDefinitionReader {
 
     public static final String ID_ATTRIBUTE = "id";
     public static final String CLASS_ATTRIBUTE = "class";
     public static final String SCOPE_ATTRIBUTE = "scope";
-
     public static final String PROPERTY_ELEMENT = "property";
     public static final String REF_ATTRIBUTE = "ref";
     public static final String VALUE_ATTRIBUTE = "value";
     public static final String NAME_ATTRIBUTE = "name";
+    public static final String CONSTRUCTOR_ARG_ELEMENT = "constructor-arg";
+    public static final String TYPE_ATTRIBUTE = "type";
 
     BeanDefinitionRegistry registry;
-
     protected final Log logger = LogFactory.getLog(getClass());
 
     public XmlBeanDefinitionReader(BeanDefinitionRegistry registry){
@@ -59,6 +62,7 @@ public class XmlBeanDefinitionReader {
                 if (ele.attribute(SCOPE_ATTRIBUTE)!=null) {
                     bd.setScope(ele.attributeValue(SCOPE_ATTRIBUTE));
                 }
+                parseConstructorArgElements(ele,bd);
                 parsePropertyElement(ele,bd);
                 this.registry.registerBeanDefinition(id, bd);
             }
@@ -75,35 +79,28 @@ public class XmlBeanDefinitionReader {
         }
     }
 
-    public void loadBeanDefinitions(String configFile){
-        InputStream is = null;
-        try{
-            ClassLoader cl = ClassUtils.getDefaultClassLoader();
-            is = cl.getResourceAsStream(configFile);
-            SAXReader reader = new SAXReader();
-            Document doc = reader.read(is);
-
-            Element root = doc.getRootElement(); //<beans>
-            Iterator<Element> iter = root.elementIterator();
-            while(iter.hasNext()){
-                Element ele = (Element)iter.next();
-                String id = ele.attributeValue(ID_ATTRIBUTE);
-                String beanClassName = ele.attributeValue(CLASS_ATTRIBUTE);
-                BeanDefinition bd = new GenericBeanDefinition(id,beanClassName);
-                this.registry.registerBeanDefinition(id, bd);
-            }
-        } catch (Exception e) {
-            throw new BeanDefinitionStoreException("IOException parsing XML document from " + configFile,e);
-        }finally{
-            if(is != null){
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+    public void parseConstructorArgElements(Element beanEle, BeanDefinition bd) {
+        Iterator iter = beanEle.elementIterator(CONSTRUCTOR_ARG_ELEMENT);
+        while(iter.hasNext()){
+            Element ele = (Element)iter.next();
+            parseConstructorArgElement(ele, bd);
         }
 
+    }
+    public void parseConstructorArgElement(Element ele, BeanDefinition bd) {
+
+        String typeAttr = ele.attributeValue(TYPE_ATTRIBUTE);
+        String nameAttr = ele.attributeValue(NAME_ATTRIBUTE);
+        Object value = parsePropertyValue(ele, bd, null);
+        ConstructorArgument.ValueHolder valueHolder = new ConstructorArgument.ValueHolder(value);
+        if (StringUtils.hasLength(typeAttr)) {
+            valueHolder.setType(typeAttr);
+        }
+        if (StringUtils.hasLength(nameAttr)) {
+            valueHolder.setName(nameAttr);
+        }
+
+        bd.getConstructorArgument().addArgumentValue(valueHolder);
     }
 
     public void parsePropertyElement(Element beanElem, BeanDefinition bd) {

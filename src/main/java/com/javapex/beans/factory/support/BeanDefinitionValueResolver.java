@@ -1,13 +1,14 @@
 package com.javapex.beans.factory.support;
 
+import com.javapex.beans.factory.BeanFactory;
 import com.javapex.beans.factory.config.RuntimeBeanReference;
 import com.javapex.beans.factory.config.TypedStringValue;
 
 public class BeanDefinitionValueResolver {
-    private final DefaultBeanFactory beanFactory;
+    private final BeanFactory beanFactory;
 
     public BeanDefinitionValueResolver(
-            DefaultBeanFactory beanFactory) {
+            BeanFactory beanFactory) {
 
         this.beanFactory = beanFactory;
     }

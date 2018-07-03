@@ -1,5 +1,7 @@
 package com.javapex.beans;
 
+import com.javapex.beans.factory.support.ConstructorArgument;
+
 import java.util.List;
 
 public interface BeanDefinition {
@@ -16,4 +18,7 @@ public interface BeanDefinition {
     String getBeansClassName();
 
     List<PropertyValue> getPropertyValues();
+    public ConstructorArgument getConstructorArgument();
+    public String getID();
+    public boolean hasConstructorArgumentValues();
 }
