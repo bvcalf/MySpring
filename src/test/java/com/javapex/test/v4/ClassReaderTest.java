@@ -11,7 +11,7 @@ import org.objectweb.asm.ClassReader;
 import java.io.IOException;
 
 public class ClassReaderTest {
-/*
+
     @Test
     public void testGetClasMetaData() throws IOException {
         ClassPathResource resource = new ClassPathResource("com/javapex/service/v4/PetStoreService.class");
@@ -28,7 +28,7 @@ public class ClassReaderTest {
         Assert.assertEquals("java.lang.Object", visitor.getSuperClassName());
         Assert.assertEquals(0, visitor.getInterfaceNames().length);
     }
-*/
+
     @Test
     public void testGetAnnonation() throws Exception{
         ClassPathResource resource = new ClassPathResource("com/javapex/service/v4/PetStoreService.class");

@@ -1,11 +1,12 @@
 package com.javapex.core.type.classreading;
 
 import com.javapex.asm.SpringAsmInfo;
+import com.javapex.core.type.ClassMetadata;
 import com.javapex.util.ClassUtils;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Opcodes;
 
-public class ClassMetadataReadingVisitor extends ClassVisitor /*implements ClassMetadata*/{
+public class ClassMetadataReadingVisitor extends ClassVisitor implements ClassMetadata {
     private String className;
 
     private boolean isInterface;

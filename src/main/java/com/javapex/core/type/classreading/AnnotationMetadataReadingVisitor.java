@@ -1,5 +1,6 @@
 package com.javapex.core.type.classreading;
 import com.javapex.core.annotation.AnnotationAttributes;
+import com.javapex.core.type.AnnotationMetadata;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Type;
 
@@ -7,7 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-public class AnnotationMetadataReadingVisitor extends ClassMetadataReadingVisitor /*implements  AnnotationMetadata */{
+public class AnnotationMetadataReadingVisitor extends ClassMetadataReadingVisitor implements AnnotationMetadata {
 
     private final Set<String> annotationSet = new LinkedHashSet<String>(4);
     private final Map<String, AnnotationAttributes> attributeMap = new LinkedHashMap<String, AnnotationAttributes>(4);
