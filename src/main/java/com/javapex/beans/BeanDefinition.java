@@ -10,15 +10,19 @@ public interface BeanDefinition {
     public static final String SCOPE_PROTOTYPE = "prototype";
     public static final String SCOPE_DEFAULT = "";
 
-    public boolean isSingleton();
-    public boolean isPrototype();
+    boolean isSingleton();
+    boolean isPrototype();
     String getScope();
     void setScope(String scope);
 
     String getBeansClassName();
 
     List<PropertyValue> getPropertyValues();
-    public ConstructorArgument getConstructorArgument();
-    public String getID();
-    public boolean hasConstructorArgumentValues();
+    ConstructorArgument getConstructorArgument();
+    String getID();
+    boolean hasConstructorArgumentValues();
+
+    Class<?> resolveBeanClass(ClassLoader classLoader) throws ClassNotFoundException;
+    Class<?> getBeanClass() throws IllegalStateException ;
+    boolean hasBeanClass();
 }

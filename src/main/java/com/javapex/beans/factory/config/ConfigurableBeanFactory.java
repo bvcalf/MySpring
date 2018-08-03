@@ -1,8 +1,6 @@
 package com.javapex.beans.factory.config;
 
-import com.javapex.beans.factory.BeanFactory;
-
-public interface ConfigurableBeanFactory extends BeanFactory {
+public interface ConfigurableBeanFactory extends AutowireCapableBeanFactory {
 
     void setBeanClassLoader(ClassLoader beanClassLoader);
 
