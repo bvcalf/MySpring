@@ -1,5 +1,6 @@
 package com.javapex.context.support;
 
+import com.javapex.beans.factory.NoSuchBeanDefinitionException;
 import com.javapex.beans.factory.annotation.AutowiredAnnotationProcessor;
 import com.javapex.beans.factory.config.ConfigurableBeanFactory;
 import com.javapex.beans.factory.support.DefaultBeanFactory;
@@ -41,5 +42,10 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
         postProcessor.setBeanFactory(beanFactory);
         beanFactory.addBeanPostProcessor(postProcessor);
 
+    }
+
+
+    public Class<?> getType(String name) throws NoSuchBeanDefinitionException {
+        return this.defaultBeanFactory.getType(name);
     }
 }

@@ -4,6 +4,7 @@ import com.javapex.beans.BeanDefinition;
 import com.javapex.beans.PropertyValue;
 import com.javapex.beans.SimpleTypeConverter;
 import com.javapex.beans.factory.BeanCreationException;
+import com.javapex.beans.factory.NoSuchBeanDefinitionException;
 import com.javapex.beans.factory.config.BeanPostProcessor;
 import com.javapex.beans.factory.config.ConfigurableBeanFactory;
 import com.javapex.beans.factory.config.DependencyDescriptor;
@@ -156,5 +157,14 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry
     }
     public List<BeanPostProcessor> getBeanPostProcessors() {
         return this.beanPostProcessors;
+    }
+
+    public Class<?> getType(String name) throws NoSuchBeanDefinitionException {
+        BeanDefinition bd = this.getBeanDefinition(name);
+        if(bd == null){
+            throw new NoSuchBeanDefinitionException(name);
+        }
+        resolveBeanClass(bd);
+        return bd.getBeanClass();
     }
 }
