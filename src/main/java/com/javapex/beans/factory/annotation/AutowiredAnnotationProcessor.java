@@ -1,6 +1,9 @@
 package com.javapex.beans.factory.annotation;
 
+import com.javapex.beans.BeansException;
+import com.javapex.beans.factory.BeanCreationException;
 import com.javapex.beans.factory.config.AutowireCapableBeanFactory;
+import com.javapex.beans.factory.config.InstantiationAwareBeanPostProcessor;
 import com.javapex.core.annotation.AnnotationUtils;
 import com.javapex.util.ReflectionUtils;
 
@@ -13,7 +16,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
-public class AutowiredAnnotationProcessor {
+public class AutowiredAnnotationProcessor implements InstantiationAwareBeanPostProcessor {
     private AutowireCapableBeanFactory beanFactory;
     private String requiredParameterName = "required";
     private boolean requiredParameterValue = true;
@@ -80,7 +83,34 @@ public class AutowiredAnnotationProcessor {
         }
         return null;
     }
+
     public void setBeanFactory(AutowireCapableBeanFactory beanFactory){
         this.beanFactory = beanFactory;
+    }
+    public Object beforeInitialization(Object bean, String beanName) throws BeansException {
+        //do nothing
+        return bean;
+    }
+    public Object afterInitialization(Object bean, String beanName) throws BeansException {
+        // do nothing
+        return bean;
+    }
+    public Object beforeInstantiation(Class<?> beanClass, String beanName) throws BeansException {
+        return null;
+    }
+
+    public boolean afterInstantiation(Object bean, String beanName) throws BeansException {
+        // do nothing
+        return true;
+    }
+
+    public void postProcessPropertyValues(Object bean, String beanName) throws BeansException {
+        InjectionMetadata metadata = buildAutowiringMetadata(bean.getClass());
+        try {
+            metadata.inject(bean);
+        }
+        catch (Throwable ex) {
+            throw new BeanCreationException(beanName, "Injection of autowired dependencies failed", ex);
+        }
     }
 }

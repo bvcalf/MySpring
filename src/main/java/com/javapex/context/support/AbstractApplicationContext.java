@@ -1,5 +1,7 @@
 package com.javapex.context.support;
 
+import com.javapex.beans.factory.annotation.AutowiredAnnotationProcessor;
+import com.javapex.beans.factory.config.ConfigurableBeanFactory;
 import com.javapex.beans.factory.support.DefaultBeanFactory;
 import com.javapex.beans.factory.xml.XmlBeanDefinitionReader;
 import com.javapex.context.ApplicationContext;
@@ -16,6 +18,7 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
         Resource resource = this.getResourceByPath(configFile);
         xmlBeanDefinitionReader.loadBeanDefinitions(resource);
         defaultBeanFactory.setBeanClassLoader(this.getBeanClassLoader());//TODO 有什么问题？
+        registerBeanPostProcessors(defaultBeanFactory);
     }
 
     public Object getBean(String beanID) {
@@ -30,5 +33,13 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
 
     public ClassLoader getBeanClassLoader() {
         return (this.beanClassLoader != null ? this.beanClassLoader : ClassUtils.getDefaultClassLoader());
+    }
+
+    protected void registerBeanPostProcessors(ConfigurableBeanFactory beanFactory) {
+
+        AutowiredAnnotationProcessor postProcessor = new AutowiredAnnotationProcessor();
+        postProcessor.setBeanFactory(beanFactory);
+        beanFactory.addBeanPostProcessor(postProcessor);
+
     }
 }

@@ -4,18 +4,23 @@ import com.javapex.beans.BeanDefinition;
 import com.javapex.beans.PropertyValue;
 import com.javapex.beans.SimpleTypeConverter;
 import com.javapex.beans.factory.BeanCreationException;
+import com.javapex.beans.factory.config.BeanPostProcessor;
 import com.javapex.beans.factory.config.ConfigurableBeanFactory;
 import com.javapex.beans.factory.config.DependencyDescriptor;
+import com.javapex.beans.factory.config.InstantiationAwareBeanPostProcessor;
 import com.javapex.util.ClassUtils;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DefaultBeanFactory extends DefaultSingletonBeanRegistry
         implements BeanDefinitionRegistry,ConfigurableBeanFactory {
+
+    private List<BeanPostProcessor> beanPostProcessors = new ArrayList<BeanPostProcessor>();
 
     private ClassLoader beanClassLoader;
     private final Map<String,BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<String, BeanDefinition>();
@@ -76,6 +81,14 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry
     }
 
     protected void populateBean(BeanDefinition bd, Object bean){
+
+        for(BeanPostProcessor processor : this.getBeanPostProcessors()){
+            if(processor instanceof InstantiationAwareBeanPostProcessor){
+                ((InstantiationAwareBeanPostProcessor)processor).postProcessPropertyValues(bean, bd.getID());
+            }
+        }
+
+
         List<PropertyValue> pvs = bd.getPropertyValues();
 
         if (pvs == null || pvs.isEmpty()) {
@@ -136,5 +149,12 @@ public class DefaultBeanFactory extends DefaultSingletonBeanRegistry
                 throw new RuntimeException("can't load class:"+bd.getBeansClassName());
             }
         }
+    }
+
+    public void addBeanPostProcessor(BeanPostProcessor postProcessor){
+        this.beanPostProcessors.add(postProcessor);
+    }
+    public List<BeanPostProcessor> getBeanPostProcessors() {
+        return this.beanPostProcessors;
     }
 }
