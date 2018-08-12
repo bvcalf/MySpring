@@ -1,10 +1,12 @@
 package com.javapex.aop.config;
 import com.javapex.beans.factory.BeanFactory;
+import com.javapex.beans.factory.BeanFactoryAware;
+import com.javapex.beans.factory.FactoryBean;
 import com.javapex.util.BeanUtils;
 import com.javapex.util.StringUtils;
 
 import java.lang.reflect.Method;
-public class MethodLocatingFactory {
+public class MethodLocatingFactory implements FactoryBean<Method>, BeanFactoryAware {
     private String targetBeanName;
 
     private String methodName;
@@ -46,6 +48,8 @@ public class MethodLocatingFactory {
     public Method getObject() throws Exception {
         return this.method;
     }
-
+    public Class<?> getObjectType() {
+        return Method.class;
+    }
 
 }

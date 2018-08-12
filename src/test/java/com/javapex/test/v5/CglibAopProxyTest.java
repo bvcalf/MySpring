@@ -3,9 +3,11 @@ package com.javapex.test.v5;
 import com.javapex.aop.AspectJ.AspectJAfterReturningAdvice;
 import com.javapex.aop.AspectJ.AspectJBeforeAdvice;
 import com.javapex.aop.AspectJ.AspectJExpressionPointcut;
+import com.javapex.aop.config.AspectInstanceFactory;
 import com.javapex.aop.framework.AopConfig;
 import com.javapex.aop.framework.AopConfigSupport;
 import com.javapex.aop.framework.CglibProxyFactory;
+import com.javapex.beans.factory.BeanFactory;
 import com.javapex.service.v5.PetStoreService;
 import com.javapex.tx.TransactionManager;
 import com.javapex.util.MessageTracker;
@@ -15,31 +17,34 @@ import org.junit.Test;
 
 import java.util.List;
 
-public class CglibAopProxyTest {
+public class CglibAopProxyTest extends AbstractV5Test{
     private static AspectJBeforeAdvice beforeAdvice = null;
     private static AspectJAfterReturningAdvice afterAdvice = null;
     private static AspectJExpressionPointcut pc = null;
-
-    private TransactionManager tx;
+    private BeanFactory beanFactory = null;
+    private AspectInstanceFactory aspectInstanceFactory = null;
 
     @Before
     public  void setUp() throws Exception{
 
 
-        tx = new TransactionManager();
         String expression = "execution(* com.javapex.service.v5.*.placeOrder(..))";
         pc = new AspectJExpressionPointcut();
         pc.setExpression(expression);
 
+        beanFactory = this.getBeanFactory("petstore-v5.xml");
+        aspectInstanceFactory = this.getAspectInstanceFactory("tx");
+        aspectInstanceFactory.setBeanFactory(beanFactory);
+
         beforeAdvice = new AspectJBeforeAdvice(
-                TransactionManager.class.getMethod("start"),
+                getAdviceMethod("start"),
                 pc,
-                tx);
+                aspectInstanceFactory);
 
         afterAdvice = new AspectJAfterReturningAdvice(
-                TransactionManager.class.getMethod("commit"),
+                this.getAdviceMethod("commit"),
                 pc,
-                tx);
+                aspectInstanceFactory);
 
     }
 
