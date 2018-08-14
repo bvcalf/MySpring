@@ -9,6 +9,8 @@ import com.javapex.context.ApplicationContext;
 import com.javapex.core.io.Resource;
 import com.javapex.util.ClassUtils;
 
+import java.util.List;
+
 public abstract class AbstractApplicationContext implements ApplicationContext {
     private ClassLoader beanClassLoader;
     private DefaultBeanFactory defaultBeanFactory = null;
@@ -47,5 +49,9 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
 
     public Class<?> getType(String name) throws NoSuchBeanDefinitionException {
         return this.defaultBeanFactory.getType(name);
+    }
+
+    public List<Object> getBeansByType(Class<?> type){
+        return this.defaultBeanFactory.getBeansByType(type);
     }
 }
