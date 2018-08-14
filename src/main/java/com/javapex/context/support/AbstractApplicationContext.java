@@ -1,5 +1,6 @@
 package com.javapex.context.support;
 
+import com.javapex.aop.AspectJ.AspectJAutoProxyCreator;
 import com.javapex.beans.factory.NoSuchBeanDefinitionException;
 import com.javapex.beans.factory.annotation.AutowiredAnnotationProcessor;
 import com.javapex.beans.factory.config.ConfigurableBeanFactory;
@@ -40,10 +41,16 @@ public abstract class AbstractApplicationContext implements ApplicationContext {
 
     protected void registerBeanPostProcessors(ConfigurableBeanFactory beanFactory) {
 
-        AutowiredAnnotationProcessor postProcessor = new AutowiredAnnotationProcessor();
-        postProcessor.setBeanFactory(beanFactory);
-        beanFactory.addBeanPostProcessor(postProcessor);
-
+        {
+            AutowiredAnnotationProcessor postProcessor = new AutowiredAnnotationProcessor();
+            postProcessor.setBeanFactory(beanFactory);
+            beanFactory.addBeanPostProcessor(postProcessor);
+        }
+        {
+            AspectJAutoProxyCreator postProcessor = new AspectJAutoProxyCreator();
+            postProcessor.setBeanFactory(beanFactory);
+            beanFactory.addBeanPostProcessor(postProcessor);
+        }
     }
 
 

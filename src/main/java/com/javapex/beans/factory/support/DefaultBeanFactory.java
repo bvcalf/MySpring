@@ -1,6 +1,7 @@
 package com.javapex.beans.factory.support;
 
 import com.javapex.beans.BeanDefinition;
+import com.javapex.beans.BeansException;
 import com.javapex.beans.PropertyValue;
 import com.javapex.beans.SimpleTypeConverter;
 import com.javapex.beans.factory.BeanCreationException;
@@ -189,11 +190,27 @@ public class DefaultBeanFactory extends AbstractBeanFactory
         invokeAwareMethods(bean);
         //Todo，对Bean做初始化
         //创建代理
+
+        //Todo，调用Bean的init方法，暂不实现
+        if(!bd.isSynthetic()){
+            return applyBeanPostProcessorsAfterInitialization(bean,bd.getID());
+        }
         return bean;
     }
     private void invokeAwareMethods(final Object bean) {
         if (bean instanceof BeanFactoryAware) {
             ((BeanFactoryAware) bean).setBeanFactory(this);
         }
+    }
+    public Object applyBeanPostProcessorsAfterInitialization(Object existingBean, String beanName)
+            throws BeansException {
+        Object result = existingBean;
+        for (BeanPostProcessor beanProcessor : getBeanPostProcessors()) {
+            result = beanProcessor.afterInitialization(result, beanName);
+            if (result == null) {
+                return result;
+            }
+        }
+        return result;
     }
 }
